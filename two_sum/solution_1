@@ -1,0 +1,74 @@
+//first attampt solution, time complexity O(nlogn), memory complexity O(nlogn)
+class Solution {
+public:
+    void Msort(vector<int>& nums_sort, int l, int r){
+        if ((r - l) > 0) {
+            int mid = (r + l)/2;
+            vector<int> nums_sort_2 = nums_sort;
+            Msort(nums_sort_2, l, mid);
+            Msort(nums_sort_2, mid + 1, r);
+            int pos1 = l;
+            int pos2 = mid + 1;
+            for (int pos = l; pos <= r; pos++){
+                if(pos1 > mid) {
+                    nums_sort[pos] = nums_sort_2[pos2];
+                    pos2++;S
+                } else if (pos2 > r) {
+                    nums_sort[pos] = nums_sort_2[pos1];
+                    pos1++;
+                } else if (nums_sort_2[pos1] <= nums_sort_2[pos2]){
+                    nums_sort[pos] = nums_sort_2[pos1];
+                    pos1++;
+                } else {
+                    nums_sort[pos] = nums_sort_2[pos2];
+                    pos2++;
+                }
+            }
+        } 
+    }
+
+    bool BIsearch(const vector<int>& nums_sort, int target, int l, int r) {
+        if ((r - l) > 0) {
+            int mid = (r + l)/2;
+            if(target <= nums_sort[mid]) {
+                return BIsearch(nums_sort, target, l, mid);
+            } else {
+                return BIsearch(nums_sort, target, mid + 1, r);
+            }
+        } else {
+            return (target == nums_sort[l]);
+        }
+    }
+
+    int BFsearch(const vector<int>& nums, int target) {
+        int pos = -1;
+        for(int i = 0; i < nums.size(); i++){
+            if (nums[i] == target) {
+                pos = i;
+            }
+        } 
+        return pos;
+    }
+
+    vector<int> twoSum(vector<int>& nums, int target) {
+        //sort the array in increasing order: MergeSort O(nlogn)
+        vector<int> nums_sort = nums;
+        Msort(nums_sort, 0, nums.size() - 1);
+        for (int i = 0; i < nums_sort.size(); i++) {
+            std::cout << nums_sort[i] << " ";
+        }
+        vector<int> result = {-1, -1};
+        for(int i = 0; i < nums.size(); i++){
+            //Binary search in nums_sort, O(logn)
+            if (BIsearch(nums_sort, target - nums[i], 0, nums_sort.size() - 1)){
+                //Brute Force search in nums
+                result[0] = i;
+                result[1] = BFsearch(nums, target - nums[i]);
+                if(result[0] != result[1]){
+                    return result;
+                }
+            }
+        }
+        return result;
+    }
+};
